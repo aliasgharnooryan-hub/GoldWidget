@@ -5,6 +5,160 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Generate project
+        run: |
+          rm -rf app/src
+          mkdir -p app/src/main/java/com/example/goldwidget app/src/main/res/layout app/src/main/res/xml app/src/main/res/drawable app/src/main/res/values
+          cat > app/src/main/AndroidManifest.xml <<'E'
+          <?xml version="1.0" encoding="utf-8"?>
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+              <uses-permission android:name="android.permission.INTERNET"/>
+              <application android:label="نرخ بازار" android:supportsRtl="true">
+                  <activity android:name=".MainActivity" android:exported="true">
+                      <intent-filter>
+                          <action android:name="android.intent.action.MAIN"/>
+                          <category android:name="android.intent.category.LAUNCHER"/>
+                      </intent-filter>
+                  </activity>
+                  <receiver android:name=".PriceWidget" android:exported="true">
+                      <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE"/></intent-filter>
+                      <meta-data android:name="android.appwidget.provider" android:resource="@xml/price_widget_info"/>
+                  </receiver>
+              </application>
+          </manifest>
+          E
+          cat > app/src/main/res/xml/price_widget_info.xml <<'E'
+          <?xml version="1.0" encoding="utf-8"?>
+          <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+              android:minWidth="250dp" android:minHeight="110dp"
+              android:updatePeriodMillis="1800000"
+              android:initialLayout="@layout/widget"
+              android:resizeMode="horizontal|vertical"
+              android:widgetCategory="home_screen"/>
+          E
+          cat > app/src/main/res/drawable/bg.xml <<'E'
+          <?xml version="1.0" encoding="utf-8"?>
+          <shape xmlns:android="http://schemas.android.com/apk/res/android">
+              <solid android:color="#E61B1F2B"/><corners android:radius="20dp"/>
+          </shape>
+          E
+          cat > app/src/main/res/layout/widget.xml <<'E'
+          <?xml version="1.0" encoding="utf-8"?>
+          <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/root" android:layout_width="match_parent" android:layout_height="match_parent"
+              android:orientation="vertical" android:padding="14dp" android:background="@drawable/bg"
+              android:layoutDirection="rtl">
+              <TextView android:id="@+id/usd" style="@style/R"/>
+              <TextView android:id="@+id/eur" style="@style/R"/>
+              <TextView android:id="@+id/gold" style="@style/R"/>
+              <TextView android:id="@+id/coin" style="@style/R"/>
+              <TextView android:id="@+id/time" android:layout_width="match_parent" android:layout_height="wrap_content"
+                  android:textColor="#8892A6" android:textSize="11sp" android:paddingTop="4dp"/>
+          </LinearLayout>
+          E
+          cat > app/src/main/res/values/styles.xml <<'E'
+          <resources>
+              <style name="R">
+                  <item name="android:layout_width">match_parent</item>
+                  <item name="android:layout_height">wrap_content</item>
+                  <item name="android:textColor">#FFFFFF</item>
+                  <item name="android:textSize">15sp</item>
+                  <item name="android:paddingTop">2dp</item>
+                  <item name="android:paddingBottom">2dp</item>
+              </style>
+          </resources>
+          E
+          cat > app/src/main/java/com/example/goldwidget/PriceWidget.kt <<'E'
+          package com.example.goldwidget
+
+          import android.app.PendingIntent
+          import android.appwidget.AppWidgetManager
+          import android.appwidget.AppWidgetProvider
+          import android.content.Context
+          import android.content.Intent
+          import android.widget.RemoteViews
+          import org.json.JSONObject
+          import java.net.HttpURLConnection
+          import java.net.URL
+          import java.text.NumberFormat
+          import java.text.SimpleDateFormat
+          import java.util.Date
+          import java.util.Locale
+          import kotlin.concurrent.thread
+
+          class PriceWidget : AppWidgetProvider() {
+              override fun onUpdate(ctx: Context, mgr: AppWidgetManager, ids: IntArray) {
+                  val pending = goAsync()
+                  thread { try { refresh(ctx, mgr, ids) } finally { pending.finish() } }
+              }
+
+              companion object {
+                  private val ITEMS = listOf(
+                      Triple(R.id.usd, "usd_sell", "💵 دلار"),
+                      Triple(R.id.eur, "eur_sell", "💶 یورو"),
+                      Triple(R.id.gold, "18ayar", "🥇 طلا ۱۸ (گرم)"),
+                      Triple(R.id.coin, "sekkeh", "🪙 سکه امامی")
+                  )
+
+                  fun refresh(ctx: Context, mgr: AppWidgetManager, widgetIds: IntArray) {
+                      val key = ctx.getSharedPreferences("p", 0).getString("key", "") ?: ""
+                      val views = RemoteViews(ctx.packageName, R.layout.widget)
+                      try {
+                          if (key.isBlank()) throw IllegalStateException("کلید API را در اپ وارد کنید")
+                          val c = URL("https://api.navasan.tech/latest/?api_key=$key").openConnection() as HttpURLConnection
+                          c.connectTimeout = 10000; c.readTimeout = 10000
+                          val json = JSONObject(c.inputStream.bufferedReader().readText())
+                          val nf = NumberFormat.getInstance(Locale("fa"))
+                          for ((viewId, k, label) in ITEMS) {
+                              val v = json.optJSONObject(k)?.optString("value")?.toDoubleOrNull()
+                              views.setTextViewText(viewId, "$label: " + (v?.let { nf.format(it.toLong()) + " تومان" } ?: "—"))
+                          }
+                          views.setTextViewText(R.id.time, "بروزرسانی " + SimpleDateFormat("HH:mm", Locale.US).format(Date()) + " • برای رفرش لمس کنید")
+                      } catch (e: Exception) {
+                          views.setTextViewText(R.id.time, "خطا: " + (e.message ?: "نامشخص"))
+                      }
+                      val i = Intent(ctx, PriceWidget::class.java).setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
+                          .putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, widgetIds)
+                      views.setOnClickPendingIntent(R.id.root,
+                          PendingIntent.getBroadcast(ctx, 0, i, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
+                      for (id in widgetIds) mgr.updateAppWidget(id, views)
+                  }
+              }
+          }
+          E
+          cat > app/src/main/java/com/example/goldwidget/MainActivity.kt <<'E'
+          package com.example.goldwidget
+
+          import android.app.Activity
+          import android.appwidget.AppWidgetManager
+          import android.content.ComponentName
+          import android.os.Bundle
+          import android.widget.*
+          import kotlin.concurrent.thread
+
+          class MainActivity : Activity() {
+              override fun onCreate(b: Bundle?) {
+                  super.onCreate(b)
+                  val p = getSharedPreferences("p", 0)
+                  val box = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(48, 96, 48, 48) }
+                  val info = TextView(this).apply {
+                      text = "۱) کلید API رایگان را از navasan.tech بگیرید و اینجا وارد کنید.\n۲) ذخیره بزنید.\n۳) روی صفحه اصلی گوشی نگه دارید ← Widgets ← «نرخ بازار»."
+                      textSize = 16f
+                  }
+                  val et = EditText(this).apply { hint = "API Key"; setText(p.getString("key", "")); setSingleLine() }
+                  val btn = Button(this).apply { text = "ذخیره و رفرش" }
+                  btn.setOnClickListener {
+                      p.edit().putString("key", et.text.toString().trim()).apply()
+                      val m = AppWidgetManager.getInstance(this)
+                      val ids = m.getAppWidgetIds(ComponentName(this, PriceWidget::class.java))
+                      thread { PriceWidget.refresh(applicationContext, m, ids) }
+                      Toast.makeText(this, "ذخیره شد", Toast.LENGTH_SHORT).show()
+                  }
+                  box.addView(info); box.addView(et); box.addView(btn)
+                  setContentView(box)
+              }
+          }
+          E
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: 17 }
       - uses: gradle/actions/setup-gradle@v4
