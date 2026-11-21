@@ -8,7 +8,7 @@ jobs:
       - name: Generate project
         run: |
           rm -rf app/src
-          mkdir -p app/src/main/java/com/example/goldwidget app/src/main/res/layout app/src/main/res/xml app/src/main/res/drawable app/src/main/res/values
+          mkdir -p app/src/main/java/com/example/goldwidget app/src/main/res/layout app/src/main/res/xml app/src/main/res/drawable app/src/main/res/values app/src/main/res/values-night
           cat > app/src/main/AndroidManifest.xml <<'E'
           <?xml version="1.0" encoding="utf-8"?>
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
@@ -30,43 +30,79 @@ jobs:
           cat > app/src/main/res/xml/price_widget_info.xml <<'E'
           <?xml version="1.0" encoding="utf-8"?>
           <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-              android:minWidth="250dp" android:minHeight="110dp"
+              android:minWidth="250dp" android:minHeight="140dp"
               android:updatePeriodMillis="1800000"
               android:initialLayout="@layout/widget"
               android:resizeMode="horizontal|vertical"
               android:widgetCategory="home_screen"/>
           E
+          cat > app/src/main/res/values/colors.xml <<'E'
+          <resources>
+              <color name="card">#F2F2F7</color>
+              <color name="txt">#000000</color>
+              <color name="sub">#8E8E93</color>
+              <color name="line">#D1D1D6</color>
+          </resources>
+          E
+          cat > app/src/main/res/values-night/colors.xml <<'E'
+          <resources>
+              <color name="card">#1C1C1E</color>
+              <color name="txt">#FFFFFF</color>
+              <color name="sub">#8E8E93</color>
+              <color name="line">#38383A</color>
+          </resources>
+          E
           cat > app/src/main/res/drawable/bg.xml <<'E'
           <?xml version="1.0" encoding="utf-8"?>
           <shape xmlns:android="http://schemas.android.com/apk/res/android">
-              <solid android:color="#E61B1F2B"/><corners android:radius="20dp"/>
+              <solid android:color="@color/card"/><corners android:radius="24dp"/>
           </shape>
           E
           cat > app/src/main/res/layout/widget.xml <<'E'
           <?xml version="1.0" encoding="utf-8"?>
           <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:id="@+id/root" android:layout_width="match_parent" android:layout_height="match_parent"
-              android:orientation="vertical" android:padding="14dp" android:background="@drawable/bg"
-              android:layoutDirection="rtl">
-              <TextView android:id="@+id/usd" style="@style/R"/>
-              <TextView android:id="@+id/eur" style="@style/R"/>
-              <TextView android:id="@+id/gold" style="@style/R"/>
-              <TextView android:id="@+id/coin" style="@style/R"/>
-              <TextView android:id="@+id/time" android:layout_width="match_parent" android:layout_height="wrap_content"
-                  android:textColor="#8892A6" android:textSize="11sp" android:paddingTop="4dp"/>
+              android:orientation="vertical" android:paddingLeft="18dp" android:paddingRight="18dp"
+              android:paddingTop="12dp" android:paddingBottom="12dp"
+              android:background="@drawable/bg" android:layoutDirection="rtl">
+              <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                  <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                      android:text="نرخ بازار (تومان)" android:textColor="@color/sub" android:textSize="12sp" android:textStyle="bold"/>
+                  <TextView android:id="@+id/time" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                      android:textColor="@color/sub" android:textSize="12sp"/>
+              </LinearLayout>
+              <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
+                  android:orientation="horizontal" android:gravity="center_vertical">
+                  <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                      android:text="💵 دلار" android:textColor="@color/txt" android:textSize="15sp"/>
+                  <TextView android:id="@+id/usd" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                      android:textColor="@color/txt" android:textSize="17sp" android:textStyle="bold"/>
+              </LinearLayout>
+              <FrameLayout android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/line"/>
+              <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
+                  android:orientation="horizontal" android:gravity="center_vertical">
+                  <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                      android:text="💶 یورو" android:textColor="@color/txt" android:textSize="15sp"/>
+                  <TextView android:id="@+id/eur" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                      android:textColor="@color/txt" android:textSize="17sp" android:textStyle="bold"/>
+              </LinearLayout>
+              <FrameLayout android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/line"/>
+              <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
+                  android:orientation="horizontal" android:gravity="center_vertical">
+                  <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                      android:text="🥇 طلا ۱۸ (گرم)" android:textColor="@color/txt" android:textSize="15sp"/>
+                  <TextView android:id="@+id/gold" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                      android:textColor="@color/txt" android:textSize="17sp" android:textStyle="bold"/>
+              </LinearLayout>
+              <FrameLayout android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/line"/>
+              <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
+                  android:orientation="horizontal" android:gravity="center_vertical">
+                  <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                      android:text="🪙 سکه امامی" android:textColor="@color/txt" android:textSize="15sp"/>
+                  <TextView android:id="@+id/coin" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                      android:textColor="@color/txt" android:textSize="17sp" android:textStyle="bold"/>
+              </LinearLayout>
           </LinearLayout>
-          E
-          cat > app/src/main/res/values/styles.xml <<'E'
-          <resources>
-              <style name="R">
-                  <item name="android:layout_width">match_parent</item>
-                  <item name="android:layout_height">wrap_content</item>
-                  <item name="android:textColor">#FFFFFF</item>
-                  <item name="android:textSize">15sp</item>
-                  <item name="android:paddingTop">2dp</item>
-                  <item name="android:paddingBottom">2dp</item>
-              </style>
-          </resources>
           E
           cat > app/src/main/java/com/example/goldwidget/PriceWidget.kt <<'E'
           package com.example.goldwidget
@@ -94,10 +130,10 @@ jobs:
 
               companion object {
                   private val ITEMS = listOf(
-                      Triple(R.id.usd, "usd_sell", "💵 دلار"),
-                      Triple(R.id.eur, "eur_sell", "💶 یورو"),
-                      Triple(R.id.gold, "18ayar", "🥇 طلا ۱۸ (گرم)"),
-                      Triple(R.id.coin, "sekkeh", "🪙 سکه امامی")
+                      R.id.usd to "usd_sell",
+                      R.id.eur to "eur_sell",
+                      R.id.gold to "18ayar",
+                      R.id.coin to "sekkeh"
                   )
 
                   fun refresh(ctx: Context, mgr: AppWidgetManager, widgetIds: IntArray) {
@@ -109,11 +145,11 @@ jobs:
                           c.connectTimeout = 10000; c.readTimeout = 10000
                           val json = JSONObject(c.inputStream.bufferedReader().readText())
                           val nf = NumberFormat.getInstance(Locale("fa"))
-                          for ((viewId, k, label) in ITEMS) {
+                          for ((viewId, k) in ITEMS) {
                               val v = json.optJSONObject(k)?.optString("value")?.toDoubleOrNull()
-                              views.setTextViewText(viewId, "$label: " + (v?.let { nf.format(it.toLong()) + " تومان" } ?: "—"))
+                              views.setTextViewText(viewId, v?.let { nf.format(it.toLong()) } ?: "—")
                           }
-                          views.setTextViewText(R.id.time, "بروزرسانی " + SimpleDateFormat("HH:mm", Locale.US).format(Date()) + " • برای رفرش لمس کنید")
+                          views.setTextViewText(R.id.time, SimpleDateFormat("HH:mm", Locale.US).format(Date()))
                       } catch (e: Exception) {
                           views.setTextViewText(R.id.time, "خطا: " + (e.message ?: "نامشخص"))
                       }
