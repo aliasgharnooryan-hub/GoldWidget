@@ -30,7 +30,8 @@ jobs:
           cat > app/src/main/res/xml/price_widget_info.xml <<'E'
           <?xml version="1.0" encoding="utf-8"?>
           <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-              android:minWidth="250dp" android:minHeight="140dp"
+              android:minWidth="250dp" android:minHeight="180dp"
+              android:targetCellWidth="4" android:targetCellHeight="2"
               android:updatePeriodMillis="1800000"
               android:initialLayout="@layout/widget"
               android:resizeMode="horizontal|vertical"
@@ -38,10 +39,11 @@ jobs:
           E
           cat > app/src/main/res/values/colors.xml <<'E'
           <resources>
-              <color name="card">#F2F2F7</color>
+              <color name="card">#FFFFFF</color>
               <color name="txt">#000000</color>
               <color name="sub">#8E8E93</color>
-              <color name="line">#D1D1D6</color>
+              <color name="up">#D93025</color>
+              <color name="down">#2E7D4F</color>
           </resources>
           E
           cat > app/src/main/res/values-night/colors.xml <<'E'
@@ -49,58 +51,151 @@ jobs:
               <color name="card">#1C1C1E</color>
               <color name="txt">#FFFFFF</color>
               <color name="sub">#8E8E93</color>
-              <color name="line">#38383A</color>
+              <color name="up">#FF5A4F</color>
+              <color name="down">#4CC38A</color>
           </resources>
           E
-          cat > app/src/main/res/drawable/bg.xml <<'E'
+          cat > app/src/main/res/values/styles.xml <<'E'
+          <resources>
+              <style name="Nm">
+                  <item name="android:layout_width">match_parent</item>
+                  <item name="android:layout_height">wrap_content</item>
+                  <item name="android:gravity">end</item>
+                  <item name="android:textColor">@color/txt</item>
+                  <item name="android:textSize">13sp</item>
+              </style>
+              <style name="Cd">
+                  <item name="android:layout_width">match_parent</item>
+                  <item name="android:layout_height">wrap_content</item>
+                  <item name="android:gravity">end</item>
+                  <item name="android:textColor">@color/sub</item>
+                  <item name="android:textSize">11sp</item>
+              </style>
+              <style name="Ch">
+                  <item name="android:layout_width">wrap_content</item>
+                  <item name="android:layout_height">wrap_content</item>
+                  <item name="android:textSize">14sp</item>
+                  <item name="android:textStyle">bold</item>
+              </style>
+              <style name="Pr">
+                  <item name="android:layout_width">wrap_content</item>
+                  <item name="android:layout_height">wrap_content</item>
+                  <item name="android:textColor">@color/txt</item>
+                  <item name="android:textSize">30sp</item>
+                  <item name="android:textStyle">bold</item>
+                  <item name="android:maxLines">1</item>
+              </style>
+          </resources>
+          E
+          cat > app/src/main/res/drawable/card_bg.xml <<'E'
           <?xml version="1.0" encoding="utf-8"?>
           <shape xmlns:android="http://schemas.android.com/apk/res/android">
-              <solid android:color="@color/card"/><corners android:radius="24dp"/>
+              <solid android:color="@color/card"/><corners android:radius="22dp"/>
           </shape>
+          E
+          cat > app/src/main/res/drawable/ic_usd.xml <<'E'
+          <?xml version="1.0" encoding="utf-8"?>
+          <vector xmlns:android="http://schemas.android.com/apk/res/android"
+              android:width="34dp" android:height="34dp" android:viewportWidth="40" android:viewportHeight="40">
+              <group><clip-path android:pathData="M20,0a20,20 0 1,0 0,40a20,20 0 1,0 0,-40z"/>
+                  <path android:fillColor="#FFFFFF" android:pathData="M0,0h40v40H0z"/>
+                  <path android:fillColor="#B22234" android:pathData="M0,0h40v3.1H0z M0,6.2h40v3.1H0z M0,12.3h40v3.1H0z M0,18.5h40v3.1H0z M0,24.6h40v3.1H0z M0,30.8h40v3.1H0z M0,36.9h40v3.1H0z"/>
+                  <path android:fillColor="#3C3B6E" android:pathData="M0,0h20v21.6H0z"/>
+                  <path android:fillColor="#FFFFFF" android:pathData="M4,4m-1.2,0a1.2,1.2 0 1,0 2.4,0a1.2,1.2 0 1,0 -2.4,0 M10,4m-1.2,0a1.2,1.2 0 1,0 2.4,0a1.2,1.2 0 1,0 -2.4,0 M16,4m-1.2,0a1.2,1.2 0 1,0 2.4,0a1.2,1.2 0 1,0 -2.4,0 M4,10m-1.2,0a1.2,1.2 0 1,0 2.4,0a1.2,1.2 0 1,0 -2.4,0 M10,10m-1.2,0a1.2,1.2 0 1,0 2.4,0a1.2,1.2 0 1,0 -2.4,0 M16,10m-1.2,0a1.2,1.2 0 1,0 2.4,0a1.2,1.2 0 1,0 -2.4,0 M4,16m-1.2,0a1.2,1.2 0 1,0 2.4,0a1.2,1.2 0 1,0 -2.4,0 M10,16m-1.2,0a1.2,1.2 0 1,0 2.4,0a1.2,1.2 0 1,0 -2.4,0 M16,16m-1.2,0a1.2,1.2 0 1,0 2.4,0a1.2,1.2 0 1,0 -2.4,0"/>
+              </group>
+          </vector>
+          E
+          cat > app/src/main/res/drawable/ic_eur.xml <<'E'
+          <?xml version="1.0" encoding="utf-8"?>
+          <vector xmlns:android="http://schemas.android.com/apk/res/android"
+              android:width="34dp" android:height="34dp" android:viewportWidth="40" android:viewportHeight="40">
+              <path android:fillColor="#0B3D91" android:pathData="M20,0a20,20 0 1,0 0,40a20,20 0 1,0 0,-40z"/>
+              <path android:fillColor="#FFCC00" android:pathData="M20,8m-1.6,0a1.6,1.6 0 1,0 3.2,0a1.6,1.6 0 1,0 -3.2,0 M26,9.6m-1.6,0a1.6,1.6 0 1,0 3.2,0a1.6,1.6 0 1,0 -3.2,0 M30.4,14m-1.6,0a1.6,1.6 0 1,0 3.2,0a1.6,1.6 0 1,0 -3.2,0 M32,20m-1.6,0a1.6,1.6 0 1,0 3.2,0a1.6,1.6 0 1,0 -3.2,0 M30.4,26m-1.6,0a1.6,1.6 0 1,0 3.2,0a1.6,1.6 0 1,0 -3.2,0 M26,30.4m-1.6,0a1.6,1.6 0 1,0 3.2,0a1.6,1.6 0 1,0 -3.2,0 M20,32m-1.6,0a1.6,1.6 0 1,0 3.2,0a1.6,1.6 0 1,0 -3.2,0 M14,30.4m-1.6,0a1.6,1.6 0 1,0 3.2,0a1.6,1.6 0 1,0 -3.2,0 M9.6,26m-1.6,0a1.6,1.6 0 1,0 3.2,0a1.6,1.6 0 1,0 -3.2,0 M8,20m-1.6,0a1.6,1.6 0 1,0 3.2,0a1.6,1.6 0 1,0 -3.2,0 M9.6,14m-1.6,0a1.6,1.6 0 1,0 3.2,0a1.6,1.6 0 1,0 -3.2,0 M14,9.6m-1.6,0a1.6,1.6 0 1,0 3.2,0a1.6,1.6 0 1,0 -3.2,0"/>
+          </vector>
+          E
+          cat > app/src/main/res/drawable/ic_gram.xml <<'E'
+          <?xml version="1.0" encoding="utf-8"?>
+          <vector xmlns:android="http://schemas.android.com/apk/res/android"
+              android:width="34dp" android:height="34dp" android:viewportWidth="40" android:viewportHeight="40">
+              <path android:fillColor="#F5C518" android:pathData="M20,0a20,20 0 1,0 0,40a20,20 0 1,0 0,-40z"/>
+              <path android:fillColor="#FFE066" android:pathData="M20,6a14,14 0 1,0 0,28a14,14 0 1,0 0,-28z"/>
+              <path android:fillColor="#E8A317" android:pathData="M14,14h12v12H14z"/>
+          </vector>
+          E
+          cat > app/src/main/res/drawable/ic_emami.xml <<'E'
+          <?xml version="1.0" encoding="utf-8"?>
+          <vector xmlns:android="http://schemas.android.com/apk/res/android"
+              android:width="34dp" android:height="34dp" android:viewportWidth="40" android:viewportHeight="40">
+              <path android:fillColor="#E8A317" android:pathData="M20,0a20,20 0 1,0 0,40a20,20 0 1,0 0,-40z"/>
+              <path android:fillColor="#F5C518" android:pathData="M20,3a17,17 0 1,0 0,34a17,17 0 1,0 0,-34z"/>
+              <path android:fillColor="#E8A317" android:pathData="M20,10a10,10 0 1,0 0,20a10,10 0 1,0 0,-20z"/>
+              <path android:fillColor="#F5C518" android:pathData="M20,14a6,6 0 1,0 0,12a6,6 0 1,0 0,-12z"/>
+          </vector>
           E
           cat > app/src/main/res/layout/widget.xml <<'E'
           <?xml version="1.0" encoding="utf-8"?>
           <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:id="@+id/root" android:layout_width="match_parent" android:layout_height="match_parent"
-              android:orientation="vertical" android:paddingLeft="18dp" android:paddingRight="18dp"
-              android:paddingTop="12dp" android:paddingBottom="12dp"
-              android:background="@drawable/bg" android:layoutDirection="rtl">
-              <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
-                  <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
-                      android:text="نرخ بازار (تومان)" android:textColor="@color/sub" android:textSize="12sp" android:textStyle="bold"/>
-                  <TextView android:id="@+id/time" android:layout_width="wrap_content" android:layout_height="wrap_content"
-                      android:textColor="@color/sub" android:textSize="12sp"/>
+              android:orientation="vertical" android:padding="4dp" android:layoutDirection="ltr">
+              <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:orientation="horizontal">
+                  <LinearLayout android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
+                      android:layout_margin="4dp" android:padding="12dp" android:orientation="vertical" android:background="@drawable/card_bg">
+                      <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                          <ImageView android:layout_width="34dp" android:layout_height="34dp" android:src="@drawable/ic_usd"/>
+                          <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                              <TextView style="@style/Nm" android:text="US Dollar"/>
+                              <TextView style="@style/Cd" android:text="USD"/>
+                          </LinearLayout>
+                      </LinearLayout>
+                      <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:orientation="vertical" android:gravity="bottom">
+                          <TextView android:id="@+id/usd_c" style="@style/Ch"/>
+                          <TextView android:id="@+id/usd_p" style="@style/Pr"/>
+                      </LinearLayout>
+                  </LinearLayout>
+                  <LinearLayout android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
+                      android:layout_margin="4dp" android:padding="12dp" android:orientation="vertical" android:background="@drawable/card_bg">
+                      <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                          <ImageView android:layout_width="34dp" android:layout_height="34dp" android:src="@drawable/ic_eur"/>
+                          <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                              <TextView style="@style/Nm" android:text="Euro"/>
+                              <TextView style="@style/Cd" android:text="EUR"/>
+                          </LinearLayout>
+                      </LinearLayout>
+                      <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:orientation="vertical" android:gravity="bottom">
+                          <TextView android:id="@+id/eur_c" style="@style/Ch"/>
+                          <TextView android:id="@+id/eur_p" style="@style/Pr"/>
+                      </LinearLayout>
+                  </LinearLayout>
               </LinearLayout>
-              <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
-                  android:orientation="horizontal" android:gravity="center_vertical">
-                  <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
-                      android:text="💵 دلار" android:textColor="@color/txt" android:textSize="15sp"/>
-                  <TextView android:id="@+id/usd" android:layout_width="wrap_content" android:layout_height="wrap_content"
-                      android:textColor="@color/txt" android:textSize="17sp" android:textStyle="bold"/>
-              </LinearLayout>
-              <FrameLayout android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/line"/>
-              <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
-                  android:orientation="horizontal" android:gravity="center_vertical">
-                  <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
-                      android:text="💶 یورو" android:textColor="@color/txt" android:textSize="15sp"/>
-                  <TextView android:id="@+id/eur" android:layout_width="wrap_content" android:layout_height="wrap_content"
-                      android:textColor="@color/txt" android:textSize="17sp" android:textStyle="bold"/>
-              </LinearLayout>
-              <FrameLayout android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/line"/>
-              <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
-                  android:orientation="horizontal" android:gravity="center_vertical">
-                  <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
-                      android:text="🥇 طلا ۱۸ (گرم)" android:textColor="@color/txt" android:textSize="15sp"/>
-                  <TextView android:id="@+id/gold" android:layout_width="wrap_content" android:layout_height="wrap_content"
-                      android:textColor="@color/txt" android:textSize="17sp" android:textStyle="bold"/>
-              </LinearLayout>
-              <FrameLayout android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/line"/>
-              <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
-                  android:orientation="horizontal" android:gravity="center_vertical">
-                  <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
-                      android:text="🪙 سکه امامی" android:textColor="@color/txt" android:textSize="15sp"/>
-                  <TextView android:id="@+id/coin" android:layout_width="wrap_content" android:layout_height="wrap_content"
-                      android:textColor="@color/txt" android:textSize="17sp" android:textStyle="bold"/>
+              <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:orientation="horizontal">
+                  <LinearLayout android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
+                      android:layout_margin="4dp" android:padding="12dp" android:orientation="vertical" android:background="@drawable/card_bg">
+                      <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                          <ImageView android:layout_width="34dp" android:layout_height="34dp" android:src="@drawable/ic_gram"/>
+                          <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                              <TextView style="@style/Nm" android:text="Gram"/>
+                              <TextView style="@style/Cd" android:text="GRAM"/>
+                          </LinearLayout>
+                      </LinearLayout>
+                      <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:orientation="vertical" android:gravity="bottom">
+                          <TextView android:id="@+id/gold_c" style="@style/Ch"/>
+                          <TextView android:id="@+id/gold_p" style="@style/Pr"/>
+                      </LinearLayout>
+                  </LinearLayout>
+                  <LinearLayout android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
+                      android:layout_margin="4dp" android:padding="12dp" android:orientation="vertical" android:background="@drawable/card_bg">
+                      <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                          <ImageView android:layout_width="34dp" android:layout_height="34dp" android:src="@drawable/ic_emami"/>
+                          <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                              <TextView style="@style/Nm" android:text="Emami"/>
+                              <TextView style="@style/Cd" android:text="EMAMI"/>
+                          </LinearLayout>
+                      </LinearLayout>
+                      <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:orientation="vertical" android:gravity="bottom">
+                          <TextView android:id="@+id/coin_c" style="@style/Ch"/>
+                          <TextView android:id="@+id/coin_p" style="@style/Pr"/>
+                      </LinearLayout>
+                  </LinearLayout>
               </LinearLayout>
           </LinearLayout>
           E
@@ -112,15 +207,16 @@ jobs:
           import android.appwidget.AppWidgetProvider
           import android.content.Context
           import android.content.Intent
+          import android.text.SpannableStringBuilder
+          import android.text.Spanned
+          import android.text.style.RelativeSizeSpan
           import android.widget.RemoteViews
           import org.json.JSONObject
           import java.net.HttpURLConnection
           import java.net.URL
-          import java.text.NumberFormat
-          import java.text.SimpleDateFormat
-          import java.util.Date
           import java.util.Locale
           import kotlin.concurrent.thread
+          import kotlin.math.abs
 
           class PriceWidget : AppWidgetProvider() {
               override fun onUpdate(ctx: Context, mgr: AppWidgetManager, ids: IntArray) {
@@ -130,28 +226,55 @@ jobs:
 
               companion object {
                   private val ITEMS = listOf(
-                      R.id.usd to "usd_sell",
-                      R.id.eur to "eur_sell",
-                      R.id.gold to "18ayar",
-                      R.id.coin to "sekkeh"
+                      Triple("usd_sell", R.id.usd_p, R.id.usd_c),
+                      Triple("eur_sell", R.id.eur_p, R.id.eur_c),
+                      Triple("18ayar", R.id.gold_p, R.id.gold_c),
+                      Triple("sekkeh", R.id.coin_p, R.id.coin_c)
                   )
 
+                  private fun price(v: Double): CharSequence {
+                      val s = SpannableStringBuilder()
+                      if (v >= 1e6) {
+                          s.append(String.format(Locale.US, "%.3f", v / 1e6))
+                          val st = s.length
+                          s.append("M")
+                          s.setSpan(RelativeSizeSpan(0.55f), st, s.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                      } else s.append(String.format(Locale.US, "%,d", v.toLong()))
+                      return s
+                  }
+
+                  private fun short(x: Double): String = when {
+                      x >= 1e6 -> String.format(Locale.US, "%.2fM", x / 1e6)
+                      x >= 1e3 -> String.format(Locale.US, "%.2fK", x / 1e3)
+                      else -> String.format(Locale.US, "%.0f", x)
+                  }
+
                   fun refresh(ctx: Context, mgr: AppWidgetManager, widgetIds: IntArray) {
-                      val key = ctx.getSharedPreferences("p", 0).getString("key", "") ?: ""
+                      val p = ctx.getSharedPreferences("p", 0)
+                      val key = p.getString("key", "") ?: ""
                       val views = RemoteViews(ctx.packageName, R.layout.widget)
                       try {
-                          if (key.isBlank()) throw IllegalStateException("کلید API را در اپ وارد کنید")
+                          if (key.isBlank()) throw IllegalStateException("API key?")
                           val c = URL("https://api.navasan.tech/latest/?api_key=$key").openConnection() as HttpURLConnection
                           c.connectTimeout = 10000; c.readTimeout = 10000
                           val json = JSONObject(c.inputStream.bufferedReader().readText())
-                          val nf = NumberFormat.getInstance(Locale("fa"))
-                          for ((viewId, k) in ITEMS) {
-                              val v = json.optJSONObject(k)?.optString("value")?.toDoubleOrNull()
-                              views.setTextViewText(viewId, v?.let { nf.format(it.toLong()) } ?: "—")
+                          for ((k, pid, cid) in ITEMS) {
+                              val o = json.optJSONObject(k)
+                              val v = o?.optString("value")?.toDoubleOrNull()
+                              if (v == null) { views.setTextViewText(pid, "—"); views.setTextViewText(cid, ""); continue }
+                              val last = p.getString("l_$k", null)?.toDoubleOrNull()
+                              val d = o.optString("change").toDoubleOrNull() ?: (if (last != null) v - last else 0.0)
+                              p.edit().putString("l_$k", v.toString()).apply()
+                              views.setTextViewText(pid, price(v))
+                              if (d == 0.0) views.setTextViewText(cid, " ")
+                              else {
+                                  views.setTextViewText(cid, (if (d > 0) "↑" else "↓") + short(abs(d)))
+                                  views.setTextColor(cid, ctx.getColor(if (d > 0) R.color.up else R.color.down))
+                              }
                           }
-                          views.setTextViewText(R.id.time, SimpleDateFormat("HH:mm", Locale.US).format(Date()))
                       } catch (e: Exception) {
-                          views.setTextViewText(R.id.time, "خطا: " + (e.message ?: "نامشخص"))
+                          views.setTextViewText(R.id.usd_c, "خطا: " + (e.message ?: ""))
+                          views.setTextColor(R.id.usd_c, ctx.getColor(R.color.up))
                       }
                       val i = Intent(ctx, PriceWidget::class.java).setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
                           .putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, widgetIds)
@@ -168,39 +291,4 @@ jobs:
           import android.app.Activity
           import android.appwidget.AppWidgetManager
           import android.content.ComponentName
-          import android.os.Bundle
-          import android.widget.*
-          import kotlin.concurrent.thread
-
-          class MainActivity : Activity() {
-              override fun onCreate(b: Bundle?) {
-                  super.onCreate(b)
-                  val p = getSharedPreferences("p", 0)
-                  val box = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(48, 96, 48, 48) }
-                  val info = TextView(this).apply {
-                      text = "۱) کلید API رایگان را از navasan.tech بگیرید و اینجا وارد کنید.\n۲) ذخیره بزنید.\n۳) روی صفحه اصلی گوشی نگه دارید ← Widgets ← «نرخ بازار»."
-                      textSize = 16f
-                  }
-                  val et = EditText(this).apply { hint = "API Key"; setText(p.getString("key", "")); setSingleLine() }
-                  val btn = Button(this).apply { text = "ذخیره و رفرش" }
-                  btn.setOnClickListener {
-                      p.edit().putString("key", et.text.toString().trim()).apply()
-                      val m = AppWidgetManager.getInstance(this)
-                      val ids = m.getAppWidgetIds(ComponentName(this, PriceWidget::class.java))
-                      thread { PriceWidget.refresh(applicationContext, m, ids) }
-                      Toast.makeText(this, "ذخیره شد", Toast.LENGTH_SHORT).show()
-                  }
-                  box.addView(info); box.addView(et); box.addView(btn)
-                  setContentView(box)
-              }
-          }
-          E
-      - uses: actions/setup-java@v4
-        with: { distribution: temurin, java-version: 17 }
-      - uses: gradle/actions/setup-gradle@v4
-        with: { gradle-version: 8.7 }
-      - run: gradle assembleDebug
-      - uses: actions/upload-artifact@v4
-        with:
-          name: app-debug
-          path: app/build/outputs/apk/debug/app-debug.apk
+          i
