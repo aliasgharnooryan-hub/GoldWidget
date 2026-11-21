@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root" android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" android:padding="14dp" android:background="@drawable/bg"
+    android:layoutDirection="rtl">
+    <TextView android:id="@+id/usd" style="@style/R"/>
+    <TextView android:id="@+id/eur" style="@style/R"/>
+    <TextView android:id="@+id/gold" style="@style/R"/>
+    <TextView android:id="@+id/coin" style="@style/R"/>
+    <TextView android:id="@+id/time" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:textColor="#8892A6" android:textSize="11sp" android:paddingTop="4dp"/>
+</LinearLayout>
